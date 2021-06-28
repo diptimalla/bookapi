@@ -71,4 +71,48 @@ shapeAI.get("/publications", (req, res) =>{
     return res.json({publications: database.publications});
 });
 
+
+shapeAI.post("/book/new", (req ,res)=>{
+const {newBook } =req.body;
+database.books.push(newBook);
+return res.json ({ books: database.books, message: "book was added!"});
+});
+
+
+shapeAI.post("/author/new" ,(req,res )=> {
+    const {newAuthor } =req.body;
+    database.authors.push(newAuthor);
+    return res.json ({ authors: database.authors, message: "author was added!"});
+});
+
+shapeAI.post("/publication/new" , (req,res) =>{
+    const {newPublication } =req.body;
+    database.publications.push(newPublication);
+    return res.json ({ publications: database.publications, message: "publication was added!"});
+});
+
+//UPDATING title of book 
+shapeAI.put("/book/update/:isbn" , (req ,res)=> {
+     database.books.forEach((book) => {
+         if(book.ISBN=== req.params.isbn){
+             book.title = req.body.bookTitle;
+             return;
+         }
+     });
+     return res.json ({ books: database.books});
+});
+
+shapeAI.put("/book/author/update/:isbn" , (req ,res) =>{
+database.books.forEach((book) =>{
+ if(book.ISBN === req.params.isbn)
+ return book.authors.push(req.body.newAuthor);
+});
+database.authors.forEach((author) =>{
+    if(author.id=== req.body.newAuthor)
+    return author.books.push(req.params.isbn);
+});
+return res.json({books: database.books , authors:database.authors ,message:"new author was added!!" });
+});
+
+
 shapeAI.listen(3000 , () =>console.log("server running"));
