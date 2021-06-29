@@ -131,5 +131,52 @@ database.books.forEach((book) =>{
 return res.json({books:database.books , publications:database.publications, message: "successfully updated publication"});
 });
 
+//delete a book
+shapeAI.delete("/book/delete/:isbn" ,(req,res)=>{
+    const updatedBookDatabase = database.books.filter((book) => book.ISBN !== req.params.isbn);
+
+database.books = updatedBookDatabase;
+return res.json({ books: database.books});
+});
+
+//deleting author from book
+shapeAI.delete("/book/delete/author/:isbn/:authorId", (req,res)=> {
+    database.books.forEach((book) =>{
+        if (book.ISBN === req.params.isbn) {
+            const newAuthorList = book.authors.filter(
+                (author)=> author !== parseInt(req.params.authorId));
+            book.authors = newAuthorList;
+            return;
+        }
+    });
+    database.authors.forEach((author)=> {
+        if(author.id === parseInt(req.params.authorId)){
+            const newBooksList = author.books.filter((book)=>book !== req.params.isbn);
+            author.books = newBooksList;
+            return;
+        }
+    return res.json({book: database.books, author: database.authors, message:"author deleted"});
+    });
+});
+
+//deleting a book from publication
+shapeAI.delete("/publication/delete/book/:isbn/:pubId", (req,res)=>{
+    database.publications.forEach((publication) =>{
+        if(publication.id === parseInt(req.params.pubId)){
+            const newBooksList =publication.books.filter(
+                (book)=> book !== req.params.isbn);
+                publication.books = newBooksList;
+                return;
+        }
+    });
+    database.books.forEach((book)=>{
+        if(book.ISBN ===req.params.isbn){
+            book.publication=0;
+            return;
+        }
+    });
+    return res.json({books:database.books, publication:database.publications, message:"book deleted"})
+});
+
 
 shapeAI.listen(3000 , () =>console.log("server running"));
