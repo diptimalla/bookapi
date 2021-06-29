@@ -115,4 +115,21 @@ return res.json({books: database.books , authors:database.authors ,message:"new 
 });
 
 
+//  update/add new book o publication
+shapeAI.put("/publication/update/book/:isbn" , (req, res)=> {
+    database.publications.forEach((publication)=>{
+        if(publication.id === req.body.pubID){
+            return publication.books.push(req.params.isbn);
+        }
+    });
+database.books.forEach((book) =>{
+    if (book.ISBN === req.params.isbn) {
+        book.publication = req.body.pubID;
+        return;
+    }
+});
+return res.json({books:database.books , publications:database.publications, message: "successfully updated publication"});
+});
+
+
 shapeAI.listen(3000 , () =>console.log("server running"));
