@@ -20,7 +20,7 @@ let books = [
         publication: 1,
       },
   ];
-  
+
   const authors = [
     {
       id: 1,

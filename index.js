@@ -1,5 +1,8 @@
+require("dotenv").config();
+
 //framework
 const express =require("express");
+const mongoose  = require('mongoose');
 
 //database
 const database=require("./database/index");
@@ -9,6 +12,17 @@ const shapeAI = express();
 
 //configurations
 shapeAI.use(express.json());
+
+
+mongoose.connect(process.env.MONGO_URL,
+{
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false,
+    useCreateIndex: true
+})
+.then(()=> console.log("connection established"));
+
 
 //to get all book api
 shapeAI.get("/" , (req , res) =>{
