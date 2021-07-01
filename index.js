@@ -49,9 +49,10 @@ shapeAI.get("/is/:isbn",async (req,res)=>{
 
 //get specific books based on category
 shapeAI.get("/c/:category" ,async (req, res) =>{
-    //const getSpecificBooks= database.books.filter((book) => book.category.includes(req.params.category)
-  //  );
-    if(getSpecificBooks.length ===0){
+    const getSpecificBooks = await BookModel.findOne({
+        category: req.params.category,
+    });
+    if(!getSpecificBooks){
         return res.json({
             error: `No book found for the category of ${req.params.category}`,
         });
@@ -72,8 +73,9 @@ shapeAI.get("/a/:author" , (req, res) =>{
 });*/
 
 //to get all authors
-shapeAI.get("/author", (req, res) => {
-return res.json({authors: database.authors});
+shapeAI.get("/author",async(req, res) => {
+    const getAllAuthors =await AuthorModel.find();
+return res.json({authors: getAllAuthors});
 });
 
 // to get list of authors based on a books isbn
@@ -94,23 +96,23 @@ shapeAI.get("/publications", (req, res) =>{
 });
 
 
-shapeAI.post("/book/new", (req ,res)=>{
+shapeAI.post("/book/new", async (req ,res)=>{
 const {newBook } =req.body;
-database.books.push(newBook);
-return res.json ({ books: database.books, message: "book was added!"});
+const addNewBook = BookModel.create(newBook);
+return res.json ({ books: addNewBook, message: "book was added!"});
 });
 
 
 shapeAI.post("/author/new" ,(req,res )=> {
     const {newAuthor } =req.body;
-    database.authors.push(newAuthor);
-    return res.json ({ authors: database.authors, message: "author was added!"});
+    const addNewAuthor = AuthorModel.create(newAuthor);
+    return res.json ({ authors: addNewAuthor, message: "author was added!"});
 });
 
 shapeAI.post("/publication/new" , (req,res) =>{
     const {newPublication } =req.body;
-    database.publications.push(newPublication);
-    return res.json ({ publications: database.publications, message: "publication was added!"});
+    const addNewPublication = PublicationModel.create(newPublication);
+    return res.json ({ publications: addNewPublication, message: "publication was added!"});
 });
 
 //UPDATING title of book 
